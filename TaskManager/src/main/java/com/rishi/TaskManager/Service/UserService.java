@@ -1,5 +1,6 @@
 package com.rishi.TaskManager.Service;
 
+import com.rishi.TaskManager.Config.JwtUtil;
 import com.rishi.TaskManager.Model.User;
 import com.rishi.TaskManager.Repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +15,12 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    private final JwtUtil jwtUtil;
+
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder,JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public User registerUser(User user) {
@@ -32,7 +36,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User loginUser(String email,String password) {
+    public String loginUser(String email,String password) {
 
         Optional<User> userOptional = userRepository.findByEmail(email);
 
@@ -46,6 +50,6 @@ public class UserService {
             throw new RuntimeException("Invalid Password");
         }
 
-        return user;
+        return jwtUtil.generateToken(user.getEmail());
     }
 }
