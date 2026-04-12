@@ -1,4 +1,4 @@
-package com.rishi.TaskManager.Config;
+package com.rishi.TaskManager.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,10 +1,10 @@
-package com.rishi.TaskManager.Service;
+package com.rishi.TaskManager.service;
 
-import com.rishi.TaskManager.Exception.TaskNotFoundException;
-import com.rishi.TaskManager.Model.Task;
-import com.rishi.TaskManager.Model.User;
-import com.rishi.TaskManager.Repository.TaskRepository;
-import com.rishi.TaskManager.Repository.UserRepository;
+import com.rishi.TaskManager.exception.TaskNotFoundException;
+import com.rishi.TaskManager.model.Task;
+import com.rishi.TaskManager.model.User;
+import com.rishi.TaskManager.repository.TaskRepository;
+import com.rishi.TaskManager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

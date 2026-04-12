@@ -1,4 +1,4 @@
-package com.rishi.TaskManager.Model;
+package com.rishi.TaskManager.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

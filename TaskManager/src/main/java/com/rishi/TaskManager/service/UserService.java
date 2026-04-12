@@ -1,8 +1,8 @@
-package com.rishi.TaskManager.Service;
+package com.rishi.TaskManager.service;
 
-import com.rishi.TaskManager.Config.JwtUtil;
-import com.rishi.TaskManager.Model.User;
-import com.rishi.TaskManager.Repository.UserRepository;
+import com.rishi.TaskManager.config.JwtUtil;
+import com.rishi.TaskManager.model.User;
+import com.rishi.TaskManager.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

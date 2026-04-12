@@ -1,4 +1,4 @@
-package com.rishi.TaskManager.Config;
+package com.rishi.TaskManager.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

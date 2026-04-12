@@ -1,7 +1,7 @@
-package com.rishi.TaskManager.Controller;
+package com.rishi.TaskManager.controller;
 
-import com.rishi.TaskManager.Model.User;
-import com.rishi.TaskManager.Service.UserService;
+import com.rishi.TaskManager.model.User;
+import com.rishi.TaskManager.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

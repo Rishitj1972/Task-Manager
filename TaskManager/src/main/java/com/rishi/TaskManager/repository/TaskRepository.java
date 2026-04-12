@@ -1,6 +1,6 @@
-package com.rishi.TaskManager.Repository;
+package com.rishi.TaskManager.repository;
 
-import com.rishi.TaskManager.Model.Task;
+import com.rishi.TaskManager.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

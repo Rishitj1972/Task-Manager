@@ -1,4 +1,4 @@
-package com.rishi.TaskManager.Exception;
+package com.rishi.TaskManager.exception;
 
 
 public class TaskNotFoundException extends RuntimeException{

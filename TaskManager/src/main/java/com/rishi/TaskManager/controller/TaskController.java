@@ -1,7 +1,7 @@
-package com.rishi.TaskManager.Controller;
+package com.rishi.TaskManager.controller;
 
-import com.rishi.TaskManager.Model.Task;
-import com.rishi.TaskManager.Service.TaskService;
+import com.rishi.TaskManager.model.Task;
+import com.rishi.TaskManager.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
