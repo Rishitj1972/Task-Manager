@@ -1,12 +1,15 @@
 package com.rishi.TaskManager.service;
 
+import com.rishi.TaskManager.dto.TaskDTO;
 import com.rishi.TaskManager.exception.TaskNotFoundException;
+import com.rishi.TaskManager.exception.UnauthorizedException;
 import com.rishi.TaskManager.model.Task;
 import com.rishi.TaskManager.model.User;
 import com.rishi.TaskManager.repository.TaskRepository;
 import com.rishi.TaskManager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +32,27 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> getTasksForUsers(String email) {
+    public List<TaskDTO> getTasksForUsers(String email) {
 
-        return taskRepository.findByUserEmail(email);
+        List<Task> tasks = taskRepository.findByUserEmail(email);
+
+        List<TaskDTO> dtoList = new ArrayList<>();
+
+        for(Task task : tasks) {
+            dtoList.add(convertDTO(task));
+        }
+
+        return dtoList;
     }
 
-    public void deleteTask(Long id) {
+    public void deleteTask(Long id,String email) {
+
+        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Tasks Found"));
+
+        if(!task.getUser().getEmail().equals(email)) {
+            throw new UnauthorizedException("You cannot delete this task");
+        }
+
         taskRepository.deleteById(id);
     }
 
@@ -43,16 +61,35 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException("Task with id " + id + " not found"));
     }
 
-    public Task updateTask(Long id,Task updatedTask) {
-        Task existingTask = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task with id " + id + " not found"));
 
-        if(existingTask != null) {
-            existingTask.setTitle(updatedTask.getTitle());
-            existingTask.setDescription(updatedTask.getDescription());
-            existingTask.setComplete(updatedTask.isComplete());
+    public Task updateTask(Long id,Task updatedTask,String email) {
 
-            return taskRepository.save(existingTask);
+        Task existingTask = taskRepository.findById(id).orElseThrow(()
+                -> new TaskNotFoundException("Task with id " + id + " not found"));
+
+        if(!existingTask.getUser().getEmail().equals(email)) {
+            throw new UnauthorizedException("You cannot modify this task");
         }
-        return null;
+
+        if(updatedTask.getTitle() != null) {
+            existingTask.setTitle(updatedTask.getTitle());
+        }
+        if(updatedTask.getDescription() != null) {
+            existingTask.setDescription(updatedTask.getDescription());
+        }
+        existingTask.setComplete(updatedTask.isComplete());
+
+        return taskRepository.save(existingTask);
+    }
+
+
+    private TaskDTO convertDTO(Task task) {
+        TaskDTO dto = new TaskDTO();
+        dto.setId(task.getId());
+        dto.setTitle(task.getTitle());
+        dto.setDescription(task.getDescription());
+        dto.setCompleted(task.isComplete());
+
+        return dto;
     }
 }
