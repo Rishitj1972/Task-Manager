@@ -1,5 +1,6 @@
 package com.rishi.TaskManager.controller;
 
+import com.rishi.TaskManager.dto.AuthResponse;
 import com.rishi.TaskManager.model.User;
 import com.rishi.TaskManager.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
-        return userService.loginUser(user.getEmail(), user.getPassword());
+    public AuthResponse loginUser(@RequestBody User user) {
+
+        String token =  userService.loginUser(user.getEmail(), user.getPassword());
+        System.out.println("Generated Token: " + token);
+        return new AuthResponse(token);
     }
 }
