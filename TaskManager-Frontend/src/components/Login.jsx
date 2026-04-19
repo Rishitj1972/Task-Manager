@@ -23,8 +23,6 @@ function Login() {
         const data = await response.json();
         localStorage.setItem("token", data.token);
 
-        await fetchTask();
-
         console.log("Token stored")
 
     } catch (error) {
@@ -33,32 +31,19 @@ function Login() {
 
   };
 
-  const fetchTask = async() => {
-
-    const token = localStorage.getItem("token");
-
-    const response = await fetch("http://localhost:8080/tasks", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer "+ token,
-        },
-    });
-
-    const data = await response.json();
-    console.log("Tasks: ",data);
-
-  }
-
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Login</h1>
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-2xl shadow-md w-80"
+        >
+        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+    
         <input
           type="email"
           placeholder="Enter Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
         />
 
         <input
@@ -66,9 +51,10 @@ function Login() {
           placeholder="Enter Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
         />
 
-        <button>Login</button>
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>
       </form>
     </div>
   );
