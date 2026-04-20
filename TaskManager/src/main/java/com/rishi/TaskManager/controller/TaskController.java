@@ -4,6 +4,7 @@ import com.rishi.TaskManager.dto.TaskDTO;
 import com.rishi.TaskManager.model.Task;
 import com.rishi.TaskManager.service.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -49,5 +50,15 @@ public class TaskController {
                            Principal principal) {
 
         return taskService.updateTask(id,task,principal.getName());
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<TaskDTO> toggleComplete(
+            @PathVariable Long id,
+            Principal principal) {
+
+        // principal.getName() gives email of logged-in user
+        TaskDTO updatedTask = taskService.toggleComplete(id, principal.getName());
+        return ResponseEntity.ok(updatedTask);
     }
 }

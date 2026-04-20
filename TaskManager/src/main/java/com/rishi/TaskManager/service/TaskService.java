@@ -82,6 +82,18 @@ public class TaskService {
         return taskRepository.save(existingTask);
     }
 
+    public TaskDTO toggleComplete(Long id, String email) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if(!task.getUser().getEmail().equals(email)){
+            throw new RuntimeException("Not authorized");
+        }
+
+        task.setComplete(!task.isComplete());
+        return new TaskDTO(taskRepository.save(task));
+    }
+
 
     private TaskDTO convertDTO(Task task) {
         TaskDTO dto = new TaskDTO();
