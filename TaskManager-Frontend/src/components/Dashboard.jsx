@@ -5,6 +5,40 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filterTask, setFilterTask] = useState("all");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  // Add Task
+  const addTask = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to add task");
+
+      const newTask = await response.json();
+
+      // update UI instantly
+      setTasks((prev) => [...prev, newTask]);
+
+      setTitle("");
+      setDescription("");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   // Fetch all tasks
   const fetchTasks = async () => {
@@ -12,7 +46,7 @@ const Dashboard = () => {
     try {
       const response = await fetch("http://localhost:8080/tasks", {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -40,7 +74,7 @@ const Dashboard = () => {
       const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -56,18 +90,21 @@ const Dashboard = () => {
   const toggleComplete = async (taskId) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/tasks/${taskId}/complete`, {
-        method: "PATCH",
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `http://localhost:8080/tasks/${taskId}/complete`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) throw new Error("Failed to toggle task");
 
       const updatedTask = await response.json();
       setTasks((prev) =>
-        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
       );
     } catch (err) {
       alert(err.message);
@@ -81,7 +118,7 @@ const Dashboard = () => {
       const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title, description }),
@@ -91,12 +128,20 @@ const Dashboard = () => {
 
       const updatedTask = await response.json();
       setTasks((prev) =>
-        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
       );
     } catch (err) {
       alert(err.message);
     }
   };
+
+  // Filter Task
+
+  const filteredTask = tasks.filter((task) => {
+    if (filterTask == "completed") return task.completed;
+    if (filterTask == "pending") return !task.completed;
+    return true;
+  });
 
   if (loading) return <p>Loading tasks...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -108,7 +153,51 @@ const Dashboard = () => {
         <p>No tasks found</p>
       ) : (
         <div className="space-y-2">
-          {tasks.map((task) => (
+          <div className="mb-10 space-x-2">
+            <button
+              onClick={() => setFilterTask("all")}
+              className="px-3 py-1 bg-gray-300 rounded"
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilterTask("completed")}
+              className="px-3 py-1 bg-green-300 rounded"
+            >
+              Complete
+            </button>
+            <button
+              onClick={() => setFilterTask("pending")}
+              className="px-3 py-1 bg-yellow-300 rounded"
+            >
+              Pending
+            </button>
+          </div>
+          <div className="mb-4 flex gap-2">
+            <input
+              type="text"
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="border p-2 rounded"
+            />
+
+            <input
+              type="text"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="border p-2 rounded"
+            />
+
+            <button
+              onClick={addTask}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Add
+            </button>
+          </div>
+          {filteredTask.map((task) => (
             <Task
               key={task.id}
               task={task}
