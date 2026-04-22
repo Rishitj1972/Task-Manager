@@ -22,8 +22,7 @@ function Login() {
         
         const data = await response.json();
         localStorage.setItem("token", data.token);
-
-        console.log("Token stored")
+        window.location.href="/tasks";
 
     } catch (error) {
         console.log("Error : ",error);

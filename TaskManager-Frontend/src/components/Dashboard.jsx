@@ -14,6 +14,10 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
 
     try {
+      if (!token) {
+        alert("Unauthorized");
+        return;
+      }
       const response = await fetch("http://localhost:8080/tasks", {
         method: "POST",
         headers: {
@@ -44,6 +48,10 @@ const Dashboard = () => {
   const fetchTasks = async () => {
     const token = localStorage.getItem("token");
     try {
+      if (!token) {
+        alert("Unauthorized");
+        return;
+      }
       const response = await fetch("http://localhost:8080/tasks", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -64,13 +72,23 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/auth/login";
+    } else {
+      fetchTasks();
+    }
   }, []);
 
   // Delete task
   const deleteTask = async (taskId) => {
     const token = localStorage.getItem("token");
     try {
+      if (!token) {
+        alert("Unauthorized");
+        return;
+      }
       const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
@@ -90,6 +108,10 @@ const Dashboard = () => {
   const toggleComplete = async (taskId) => {
     const token = localStorage.getItem("token");
     try {
+      if (!token) {
+        alert("Unauthorized");
+        return;
+      }
       const response = await fetch(
         `http://localhost:8080/tasks/${taskId}/complete`,
         {
@@ -115,6 +137,10 @@ const Dashboard = () => {
   const editTask = async (taskId, title, description) => {
     const token = localStorage.getItem("token");
     try {
+      if (!token) {
+        alert("Unauthorized");
+        return;
+      }
       const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
         method: "PUT",
         headers: {
@@ -143,12 +169,26 @@ const Dashboard = () => {
     return true;
   });
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href("/auth/login");
+  };
+
   if (loading) return <p>Loading tasks...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded"
+          onClick={logout}
+        >
+          LogOut
+        </button>
+      </div>
+
       {tasks.length === 0 ? (
         <p>No tasks found</p>
       ) : (
