@@ -24,7 +24,6 @@ public class UserController {
     public AuthResponse loginUser(@RequestBody User user) {
 
         String token =  userService.loginUser(user.getEmail(), user.getPassword());
-        System.out.println("Generated Token: " + token);
         return new AuthResponse(token);
     }
 }

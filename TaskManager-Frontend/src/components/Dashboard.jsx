@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Task from "./Task";
 import { useNavigate } from "react-router-dom";
+import { addTaskApi, deleteTaskApi, fetchTaskApi, toggleCompleteApi, updateTaskApi } from "../api/TaskApi";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -13,32 +14,9 @@ const Dashboard = () => {
 
   // Add Task
   const addTask = async () => {
-    const token = localStorage.getItem("token");
-
     try {
-      if (!token) {
-        alert("Unauthorized");
-        return;
-      }
-      const response = await fetch("http://localhost:8080/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          description,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to add task");
-
-      const newTask = await response.json();
-
-      // update UI instantly
+      const newTask = await addTaskApi(title, description);
       setTasks((prev) => [...prev, newTask]);
-
       setTitle("");
       setDescription("");
     } catch (err) {
@@ -48,23 +26,8 @@ const Dashboard = () => {
 
   // Fetch all tasks
   const fetchTasks = async () => {
-    const token = localStorage.getItem("token");
     try {
-      if (!token) {
-        alert("Unauthorized");
-        return;
-      }
-      const response = await fetch("http://localhost:8080/tasks", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error fetching tasks: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchTaskApi();
       setTasks(data);
     } catch (err) {
       setError(err.message);
@@ -75,7 +38,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/");
     } else {
@@ -83,23 +45,11 @@ const Dashboard = () => {
     }
   }, []);
 
+
   // Delete task
   const deleteTask = async (taskId) => {
-    const token = localStorage.getItem("token");
     try {
-      if (!token) {
-        alert("Unauthorized");
-        return;
-      }
-      const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to delete task");
-
+      await deleteTaskApi(taskId);
       setTasks((prev) => prev.filter((task) => task.id !== taskId));
     } catch (err) {
       alert(err.message);
@@ -108,25 +58,8 @@ const Dashboard = () => {
 
   // Toggle complete
   const toggleComplete = async (taskId) => {
-    const token = localStorage.getItem("token");
     try {
-      if (!token) {
-        alert("Unauthorized");
-        return;
-      }
-      const response = await fetch(
-        `http://localhost:8080/tasks/${taskId}/complete`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!response.ok) throw new Error("Failed to toggle task");
-
-      const updatedTask = await response.json();
+      const updatedTask = await toggleCompleteApi(taskId);
       setTasks((prev) =>
         prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
       );
@@ -137,24 +70,8 @@ const Dashboard = () => {
 
   // Edit task
   const editTask = async (taskId, title, description) => {
-    const token = localStorage.getItem("token");
     try {
-      if (!token) {
-        alert("Unauthorized");
-        return;
-      }
-      const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, description }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update task");
-
-      const updatedTask = await response.json();
+      const updatedTask = await updateTaskApi(taskId, title, description);
       setTasks((prev) =>
         prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
       );
@@ -164,7 +81,6 @@ const Dashboard = () => {
   };
 
   // Filter Task
-
   const filteredTask = tasks.filter((task) => {
     if (filterTask == "completed") return task.completed;
     if (filterTask == "pending") return !task.completed;
@@ -172,7 +88,6 @@ const Dashboard = () => {
   });
 
   // Log Out
-
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/");
