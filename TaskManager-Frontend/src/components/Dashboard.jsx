@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import Task from "./Task";
 import { useNavigate } from "react-router-dom";
 import { addTaskApi, deleteTaskApi, fetchTaskApi, toggleCompleteApi, updateTaskApi } from "../api/TaskApi";
+import Filter from "./Filter";
+import AddTask from "./AddTask";
+import TaskList from "./TaskList";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -109,64 +112,27 @@ const Dashboard = () => {
       </div>
 
       {tasks.length === 0 ? (
-        <p>No tasks found</p>
-      ) : (
-        <div className="space-y-2">
-          <div className="mb-10 space-x-2">
-            <button
-              onClick={() => setFilterTask("all")}
-              className="px-3 py-1 bg-gray-300 rounded"
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilterTask("completed")}
-              className="px-3 py-1 bg-green-300 rounded"
-            >
-              Complete
-            </button>
-            <button
-              onClick={() => setFilterTask("pending")}
-              className="px-3 py-1 bg-yellow-300 rounded"
-            >
-              Pending
-            </button>
-          </div>
-          <div className="mb-4 flex gap-2">
-            <input
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="border p-2 rounded"
-            />
+  <p>No tasks found</p>
+) : (
+  <>
+    <Filter setFilterTask={setFilterTask} />
 
-            <input
-              type="text"
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="border p-2 rounded"
-            />
+    <AddTask
+      title={title}
+      setTitle={setTitle}
+      description={description}
+      setDescription={setDescription}
+      onAdd={addTask}
+    />
 
-            <button
-              onClick={addTask}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Add
-            </button>
-          </div>
-          {filteredTask.map((task) => (
-            <Task
-              key={task.id}
-              task={task}
-              onDelete={deleteTask}
-              onToggleComplete={toggleComplete}
-              onEdit={editTask}
-            />
-          ))}
-        </div>
-      )}
+    <TaskList
+      tasks={filteredTask}
+      onDelete={deleteTask}
+      onToggleComplete={toggleComplete}
+      onEdit={editTask}
+    />
+  </>
+)}
     </div>
   );
 };
