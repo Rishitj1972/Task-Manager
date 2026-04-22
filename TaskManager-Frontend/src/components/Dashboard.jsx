@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Task from "./Task";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -8,6 +9,7 @@ const Dashboard = () => {
   const [filterTask, setFilterTask] = useState("all");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
 
   // Add Task
   const addTask = async () => {
@@ -75,7 +77,7 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      window.location.href = "/auth/login";
+      navigate("/");
     } else {
       fetchTasks();
     }
@@ -169,9 +171,11 @@ const Dashboard = () => {
     return true;
   });
 
+  // Log Out
+
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.href("/auth/login");
+    navigate("/");
   };
 
   if (loading) return <p>Loading tasks...</p>;

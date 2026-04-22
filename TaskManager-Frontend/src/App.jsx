@@ -1,14 +1,14 @@
+import { Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login"
 
 function App() {
 
-  const token = localStorage.getItem("token");
-
   return (
-    <div>
-      {token ? <Dashboard/> : <Login/>}
-    </div>
+    <Routes>
+      <Route path="/" element={<Login/>}/>
+      <Route path="/dashboard" element={<Dashboard/>}/>
+    </Routes>
   );
 }
 
